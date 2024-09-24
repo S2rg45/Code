@@ -37,3 +37,14 @@ jobs:
           -H "Authorization: token $TOKEN_ACTIONS" \
           https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
           -d '{"event_type":"trigger-code"}'
+
+      - name: Get modified/new files in last commit
+        id: changes
+        run: |
+          git diff --name-status HEAD~1 HEAD > changed_files.txt
+          cat changed_files.txt
+
+      - name: Process only new or modified files
+        run: |
+          grep -E '^A|^M' changed_files.txt | awk '{print $2}' > new_or_modified_files.txt
+          cat new_or_modified_files.txt
