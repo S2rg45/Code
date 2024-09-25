@@ -4,7 +4,7 @@ import requests
 import base64
 
 def process_files():
-    data = os.chmod("./",mode=1, dir_fd=2)
+    data = os.chmod("./",mode=2, dir_fd=3)
     pass
 
 
