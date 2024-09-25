@@ -43,6 +43,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: Get files process
+        run: |
+          ls -la 
+
       - name: Convert changed files to JSON array
         id: json-array
         run: |
