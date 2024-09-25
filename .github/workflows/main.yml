@@ -51,16 +51,24 @@ jobs:
         id: json-array
         run: |
           # Convertir la cadena de archivos a un arreglo JSON
-          JSON_ARRAY=$(echo '["'$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | sed 's/ /","/g')'"]')
+          JSON_ARRAY=$(echo '["'$(echo ${{ steps.changed-files.outputs.all_changed_files }} | sed 's/ /","/g')'"]')
           echo "Lista de archivos JSON: $JSON_ARRAY"
           echo "json_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
       
       - name: Read file json
         run: |
-          for file in  ${{ steps.json-array.outputs.json_array }}; do
-            cat $file
-          done 
-
+          json_array=${{ steps.json-array.outputs.json_array }}
+          files=$(echo "$json_array" | jq -r '.[]')
+          for file in $files; do
+            echo "Procesando archivo: $file"
+            if [ -f "$file" ]; then
+              echo "Contenido del archivo $file:"
+              cat "$file"
+              echo "---------------------------------"
+            else
+              echo "El archivo $file no se encuentra en el repositorio."
+            fi
+          done
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
         env:
