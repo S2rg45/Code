@@ -37,6 +37,12 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
+        with: 
+          files: |
+            *.env
+            *.py
+          separator: ","
+          write_output_files: true
 
       # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
@@ -45,7 +51,7 @@ jobs:
 
       - name: Get files process
         run: |
-          ls -la 
+          ls -la .github/outputs/
 
       - name: Get info data
         run: |
