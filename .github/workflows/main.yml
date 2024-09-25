@@ -62,7 +62,7 @@ jobs:
           done 
           ls -la file-process
 
-          for files in $(ls file-process)
+          for files in $(ls file-process); do
             cat $files
           done
 
