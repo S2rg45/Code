@@ -48,6 +48,12 @@ jobs:
           JSON_ARRAY=$(echo '["'$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | sed 's/ /","/g')'"]')
           echo "Lista de archivos JSON: $JSON_ARRAY"
           echo "json_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+      
+      - name: Read file json
+        run: |
+          for file in  ${{ steps.json-array.outputs.json_array }}; do
+            cat $file
+          done 
 
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
