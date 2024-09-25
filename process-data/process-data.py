@@ -7,6 +7,7 @@ def process_files():
     data = os.chmod("./",mode=2, dir_fd=3)
     files = os.chdir("./")
     data_request = requests.get("https://google.com")
+    print(files, data, data_request)
     pass
 
 
