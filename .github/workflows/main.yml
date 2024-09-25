@@ -52,6 +52,11 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
-          done
+          if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
+            echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
+            exit 1
+          else
+            for file in ${ALL_CHANGED_FILES}; do
+              echo "$file was changed"
+            done
+          fi

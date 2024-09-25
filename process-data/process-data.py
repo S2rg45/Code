@@ -1,3 +1,11 @@
-
-import base64
+import os
 import json
+import requests
+import base64
+
+def process_files():
+    pass
+
+
+if __name__ == __main__:
+    process_files()
