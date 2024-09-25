@@ -52,21 +52,15 @@ jobs:
         with:
           write_output_files: true
 
-      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
-      - name: Get files process
-        run: |
-          cd .git
-          ls -la 
 
       - name: Get info data
         run: |
+          mkdir file-process
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            cat $file
+            cp -r $file file-process
           done 
+          ls -la file-process
 
       - name: Convert changed files to JSON array
         id: json-array
