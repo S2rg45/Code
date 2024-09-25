@@ -5,9 +5,6 @@ import base64
 
 def process_files():
     data = os.chmod("./",mode=2, dir_fd=3)
-    d =1
-    f= 2
-    h = d +f
     return h
 
 
