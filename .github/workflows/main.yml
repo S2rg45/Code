@@ -42,10 +42,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
-        run: |
-          env:
+        env:
             ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
+        run: |
           if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
             echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
             exit 1
