@@ -5,24 +5,8 @@ import base64
 
 def process_files():
     data = 0
-    passss
+    pass
 
-
-def process_files_data():
-    data = 0
-    passss
-
-def process_files_data():
-    data = 0
-    passss
-
-def process_files_data():
-    data = 0
-    passss
-
-def process_files_data():
-    data = 0
-    passss
 
 
 if __name__ == __main__:
