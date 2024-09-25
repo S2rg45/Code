@@ -54,6 +54,6 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": "${ALL_CHANGED_FILES}"}'
+            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": ${ALL_CHANGED_FILES} }}'
           fi
           
