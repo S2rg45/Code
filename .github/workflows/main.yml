@@ -62,7 +62,7 @@ jobs:
 
       - name: Get files process
         run: |
-          ls -la .github/outputs/
+          ls -la 
 
       - name: Get info data
         run: |
