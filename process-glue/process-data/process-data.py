@@ -16,6 +16,10 @@ def process_files_data():
     data = 0
     passss
 
+def process_files_data():
+    data = 0
+    passss
+
 
 if __name__ == __main__:
     process_files()
