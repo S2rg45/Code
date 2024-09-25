@@ -53,7 +53,7 @@ jobs:
       - name: Trigger workflow infra
         env:
             ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-            
+
         run: |
           if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
             echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
@@ -63,6 +63,6 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": "${{ steps.json-array.outputs.json_array }}" }}'
+            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": ${{ steps.json-array.outputs.json_array }} }}'
           fi
           
