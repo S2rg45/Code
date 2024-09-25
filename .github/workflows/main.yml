@@ -26,17 +26,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      # Runs a single command using the runners shell
-      - name: Trigger workflow infra
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token $TOKEN_ACTIONS" \
-          https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-          -d '{"event_type":"trigger-code"}'
 
       - name: Checkout code with full history
         uses: actions/checkout@v2
@@ -57,6 +46,18 @@ jobs:
             exit 1
           else
             for file in ${ALL_CHANGED_FILES}; do
-              echo "$file was changed"
+              cat $file
             done
           fi
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Trigger workflow infra
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $TOKEN_ACTIONS" \
+          https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
+          -d '{"event_type":"trigger-code"}'
