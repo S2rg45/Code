@@ -35,16 +35,25 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
+
+        env:
+            ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
       # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: Convert changed files to JSON array
+        id: json-array
+        run: |
+          # Convertir la cadena de archivos a un arreglo JSON
+          JSON_ARRAY=$(echo '["'$(echo "${ALL_CHANGED_FILES}" | sed 's/ /","/g')'"]')
+          echo "Lista de archivos JSON: $JSON_ARRAY"
+          echo "::set-output name=json_array::$JSON_ARRAY"
+
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
-        env:
-            ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-
+        
         run: |
           if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
             echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
@@ -54,6 +63,6 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": ${ALL_CHANGED_FILES} }}'
+            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": "${{ steps.json-array.outputs.json_array }}" }}'
           fi
           
