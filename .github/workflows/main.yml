@@ -47,9 +47,9 @@ jobs:
         id: json-array
         run: |
           # Convertir la cadena de archivos a un arreglo JSON
-          JSON_ARRAY=$(echo '["'$(echo "${ALL_CHANGED_FILES}" | sed 's/ /","/g')'"]')
+          JSON_ARRAY=$(echo '["'$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | sed 's/ /","/g')'"]')
           echo "Lista de archivos JSON: $JSON_ARRAY"
-          echo "::set-output name=json_array::$JSON_ARRAY"
+          echo "{json_array}={JSON_ARRAY}" >> $GITHUB_OUTPUT
 
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
