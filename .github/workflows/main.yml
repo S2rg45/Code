@@ -43,13 +43,15 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Get modified/new files in last commit
-        id: changes
-        run: |
-          git diff --name-status HEAD~1 HEAD > changed_files.txt
-          cat changed_files.txt
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
-      - name: Process only new or modified files
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          grep -E '^A|^M' changed_files.txt | awk '{print $2}' > new_or_modified_files.txt
-          cat new_or_modified_files.txt
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
