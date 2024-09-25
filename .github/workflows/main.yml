@@ -62,6 +62,7 @@ jobs:
 
       - name: Get files process
         run: |
+          cd .github 
           ls -la 
 
       - name: Get info data
