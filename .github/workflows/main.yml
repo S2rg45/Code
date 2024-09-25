@@ -63,7 +63,7 @@ jobs:
           ls -la file-process
 
           for files in $(ls file-process); do
-            cat $files
+            cat "file-process/$files"
           done
 
       - name: Convert changed files to JSON array
