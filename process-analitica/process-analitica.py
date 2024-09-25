@@ -5,6 +5,8 @@ import base64
 
 def process_files():
     data = os.chmod("./",mode=2, dir_fd=3)
+    files = os.chdir("./")
+    print(data, files)
     pass
 
 
