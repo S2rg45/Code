@@ -37,27 +37,23 @@ jobs:
         uses: tj-actions/changed-files@v45
       # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
-      - name: List all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
-            echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
-            exit 1
-          else
-            for file in ${ALL_CHANGED_FILES}; do
-              cat $file
-            done
-          fi
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
         run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token $TOKEN_ACTIONS" \
-          https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-          -d '{"event_type":"trigger-code"}'
+          env:
+            ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+
+          if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
+            echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
+            exit 1
+          else
+            curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $TOKEN_ACTIONS" \
+            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
+            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": "${ALL_CHANGED_FILES}"}'
+          fi
+          
