@@ -62,7 +62,7 @@ jobs:
           done 
           ls -la file-process
 
-          tar -czvf files-folder.tar.gz file-folder
+          tar -czvf files-folder.tar.gz file-process
           
 
       # - name: Convert changed files to JSON array
