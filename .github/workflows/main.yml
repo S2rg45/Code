@@ -60,7 +60,7 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             cp -r $file file-process
           done 
-          ls -la file-process
+          ls -la 
 
           tar -czvf files-folder.tar.gz file-process
           
@@ -88,6 +88,6 @@ jobs:
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
             -d '{"event_type":"trigger-code"}'
-            -o files-folder.tar.gz
+            -T files-folder.tar.gz
           fi
           
