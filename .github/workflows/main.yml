@@ -62,17 +62,16 @@ jobs:
           done 
           ls -la file-process
 
-          for files in $(ls file-process); do
-            cat "file-process/$files"
-          done
+          tar -czvf files-folder.tar.gz file-folder
+          
 
-      - name: Convert changed files to JSON array
-        id: json-array
-        run: |
-          # Convertir la cadena de archivos a un arreglo JSON
-          JSON_ARRAY=$(echo '["'$(echo ${{ steps.changed-files.outputs.all_changed_files }} | sed 's/ /","/g')'"]')
-          echo "Lista de archivos JSON: $JSON_ARRAY"
-          echo "json_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+      # - name: Convert changed files to JSON array
+      #   id: json-array
+      #   run: |
+      #     # Convertir la cadena de archivos a un arreglo JSON
+      #     JSON_ARRAY=$(echo '["'$(echo ${{ steps.changed-files.outputs.all_changed_files }} | sed 's/ /","/g')'"]')
+      #     echo "Lista de archivos JSON: $JSON_ARRAY"
+      #     echo "json_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
       
       # Runs a single command using the runners shell
       - name: Trigger workflow infra
@@ -88,6 +87,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code", "client_payload": { "changed_files": ${{ steps.json-array.outputs.json_array }} }}'
+            -d '{"event_type":"trigger-code"}'
+            -o files-folder.tar.gz
           fi
           
