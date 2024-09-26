@@ -60,9 +60,8 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             cp -r $file file-process
           done 
-          ls -la 
-
           tar -czvf files-folder.tar.gz file-process
+          ls -la
           
 
       # - name: Convert changed files to JSON array
