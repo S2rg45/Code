@@ -61,8 +61,10 @@ jobs:
       - name: Generate Token
         id: generate_token
         run: |
+          python - << EOF
           import secrets
           token = secrets.token_hex(16)
+          EOF
 
       - name: Get info data
         run: |
