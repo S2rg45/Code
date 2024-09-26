@@ -63,7 +63,7 @@ jobs:
         run: |
           python - << EOF
           import secrets
-          token = secrets.token_hex(16)
+          token = secrets.token_hex(5)
           EOF
 
       - name: Get info data
@@ -81,7 +81,7 @@ jobs:
           curl -X POST \
             -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            -d '{"tag_name": "${{ steps.generate_token.outputs.token }}", "name": "${{ steps.generate_token.outputs.token }}", "body": "Release with folder"}' \
+            -d '{"tag_name": "v${{ steps.generate_token.outputs.token }}", "name": "${{ steps.generate_token.outputs.token }}", "body": "Release with folder"}' \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/releases
 
           # Obtener la URL para subir el asset
