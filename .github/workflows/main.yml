@@ -82,7 +82,7 @@ jobs:
           ISSUE_RESPONSE=$(curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
-            https://api.github.com/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues \
+            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues \
             -d '{"title": "new process ETL Glue", "body": "This issue contains a new folder to be processed."}')
 
           echo "ISSUE_RESPONSE: $ISSUE_RESPONSE"
@@ -96,7 +96,7 @@ jobs:
           UPLOAD_URL=$(curl -X POST \
             -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
             -F "file=@files-folder.tar.gz" \
-            https://uploads.github.com/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues/$ISSUE_NUMBER/comments)
+            https://uploads.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues/$ISSUE_NUMBER/comments)
           
           echo "Issue created in Repo B with number: $ISSUE_NUMBER"
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
