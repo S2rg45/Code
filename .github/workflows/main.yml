@@ -30,9 +30,13 @@ jobs:
     steps:
 
       - name: Checkout code with full history
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Get changed files
         id: changed-files
@@ -54,6 +58,12 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Generate Token
+        id: generate_token
+        run: |
+          import secrets
+          token = secrets.token_hex(16)
+
       - name: Get info data
         run: |
           mkdir file-process
@@ -62,6 +72,28 @@ jobs:
           done 
           tar -czvf files-folder.tar.gz file-process
           ls -la
+      
+      - name: Create release and upload compressed folder
+        run: |
+          # Crear un release (si no existe)
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"tag_name": "${{ steps.generate_token.outputs.token }}", "name": "${{ steps.generate_token.outputs.token }}", "body": "Release with folder"}' \
+            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/releases
+
+          # Obtener la URL para subir el asset
+          UPLOAD_URL=$(curl -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
+            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/releases/tags/${{ steps.generate_token.outputs.token }} \
+            | jq -r ".upload_url" | sed "s/{?name,label}//")
+
+          # Subir el archivo comprimido al release
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
+            -H "Content-Type: application/gzip" \
+            --data-binary @files-folder.tar.gz \
+            "${UPLOAD_URL}?name=files-folder.tar.gz"
+
           
 
       # - name: Convert changed files to JSON array
