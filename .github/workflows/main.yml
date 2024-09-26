@@ -82,7 +82,7 @@ jobs:
       - name: Upload tar.gz to Repo B
         env:
           GH_TOKEN: $TOKEN_ACTIONS
-        run: python upload_to_repo_b.py
+        run: python send-files.py
 
       # - name: Convert changed files to JSON array
       #   id: json-array
