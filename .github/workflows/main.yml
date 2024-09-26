@@ -93,7 +93,7 @@ jobs:
           echo "ISSUE_NUMBER: $ISSUE_NUMBER"
 
           # Subir el archivo comprimido como comentario en el issue
-          UPLOAD_URL=$(curl -X POST \
+          UPLOAD_URL=$(curl -X PUT \
             -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
             -F "file=@files-folder.tar.gz" \
             https://uploads.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues/$ISSUE_NUMBER/comments)
