@@ -2,8 +2,12 @@ import requests
 import base64
 import os
 
-def upload_file_to_github_repo(content, token):
-    url = f"https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/contents/files-folder.tar.gz"
+def upload_file_to_github_repo(content, token,github_workspace):
+
+    with open(github_workspace+"/"+"files-folder.tar.gz", "rb") as file:
+        encoded_string = base64.b64encode(file.read()).decode('utf-8')
+
+    url = f"https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/contents/{encoded_string}"
     
     headers = {
         "Authorization": f"token {token}",
@@ -24,7 +28,7 @@ def upload_file_to_github_repo(content, token):
 
 content = "subiendo archivos al repositorio"
 token = os.getenv('TOKEN_ACTIONS')
-print(token)
+github_workspace = os.environ['GITHUB_WORKSPACE']
 
 
-upload_file_to_github_repo(content, token)
+upload_file_to_github_repo(content, token, github_workspace)
