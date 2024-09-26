@@ -23,7 +23,8 @@ def upload_file_to_github_repo(content, token):
         print(f"Failed to upload file: {response.json()}")
 
 content = "subiendo archivos al repositorio"
-token = os.getenv('GH_TOKEN')
+token = os.getenv('TOKEN_ACTIONS')
+print(token)
 
 
 upload_file_to_github_repo(content, token)
