@@ -76,27 +76,30 @@ jobs:
           ls -la
       
       - name: Create release and upload compressed folder
+        id: create-issue
         run: |
-          # Crear un release (si no existe)
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
+          # Crear el issue en el Repositorio B
+          ISSUE_RESPONSE=$(curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
-            -d '{"tag_name": "v${{ steps.generate_token.outputs.token }}", "name": "${{ steps.generate_token.outputs.token }}", "body": "Release with folder"}' \
-            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/releases
-
-          # Obtener la URL para subir el asset
-          UPLOAD_URL=$(curl -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
-            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/releases/tags/${{ steps.generate_token.outputs.token }} \
-            | jq -r ".upload_url" | sed "s/{?name,label}//")
-
-          # Subir el archivo comprimido al release
-          curl -X POST \
             -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
-            -H "Content-Type: application/gzip" \
-            --data-binary @files-folder.tar.gz \
-            "${UPLOAD_URL}?name=files-folder.tar.gz"
+            https://api.github.com/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues \
+            -d '{"title": "new process ETL Glue", "body": "This issue contains a new folder to be processed."}')
 
+          echo "ISSUE_RESPONSE: $ISSUE_RESPONSE"
+
+          # Extraer el número del issue creado
+          ISSUE_NUMBER=$(echo $ISSUE_RESPONSE | jq -r '.number')
           
+          echo "ISSUE_NUMBER: $ISSUE_NUMBER"
+
+          # Subir el archivo comprimido como comentario en el issue
+          UPLOAD_URL=$(curl -X POST \
+            -H "Authorization: token ${{ secrets.TOKEN_ACTIONS }}" \
+            -F "file=@files-folder.tar.gz" \
+            https://uploads.github.com/DemoNubiral/MX216822-3-claro-cenam-infre-glue/issues/$ISSUE_NUMBER/comments)
+          
+          echo "Issue created in Repo B with number: $ISSUE_NUMBER"
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
 
       # - name: Convert changed files to JSON array
       #   id: json-array
@@ -120,7 +123,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code"}'
+            -d '{"event_type":"trigger-code", "ISSUE_NUMBER": "${{ steps.create-issue.outputs.ISSUE_NUMBER }}"}'
             -T files-folder.tar.gz
           fi
           
