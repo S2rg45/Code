@@ -20,13 +20,6 @@ def process_files():
     data = 0
     pass
 
-def process_files():
-    data = 0
-    pass
-
-def process_files():
-    data = 0
-    pass
 
 
 if __name__ == __main__:
