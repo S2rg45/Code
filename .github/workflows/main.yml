@@ -51,7 +51,6 @@ jobs:
 
       - name: Install Python requests
         run: |
-          pip install shutil
           pip install boto3
 
       - name: Get changed files
