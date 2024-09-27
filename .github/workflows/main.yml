@@ -17,7 +17,7 @@ on:
 
 env:
   TOKEN_ACTIONS: ${{ secrets.TOKEN_ACTIONS}}
-  REGION:        ${{ var.REGION }}
+  REGION:        ${{ vars.REGION }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
