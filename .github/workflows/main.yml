@@ -85,18 +85,33 @@ jobs:
           python file-process.py
 
       - name: Trigger workflow infra
-        env:
-            ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: $TOKEN_ACTIONS
+          repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
+          event-type: trigger-code
 
-        run: |
-          if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
-            echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
-            exit 1
-          else
-            curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token $TOKEN_ACTIONS" \
-            https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code"}'
-          fi
+      - name: Wait for create infra
+        uses: myrotvorets/wait-for-workflow-action@v1
+        with:
+          token: $TOKEN_ACTIONS
+          timeout: '10'
+          repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
+          workflow_id: main.yml
+          ref: ${{ github.ref }}
+          # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
+        # env:
+        #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+
+        # run: |
+        #   if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
+        #     echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
+        #     exit 1
+        #   else
+        #     curl -X POST \
+        #     -H "Accept: application/vnd.github.v3+json" \
+        #     -H "Authorization: token $TOKEN_ACTIONS" \
+        #     https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
+        #     -d '{"event_type":"trigger-code"}'
+        #   fi
           
