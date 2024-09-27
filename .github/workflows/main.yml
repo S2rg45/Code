@@ -96,7 +96,8 @@ jobs:
         with:
           token: ${{ secrets.TOKEN_ACTIONS }}
           timeout: '2'
-          repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
+          organization: 'DemoNubiral'
+          repository: 'MX216822-3-claro-cenam-infre-glue'
           workflow_id: '118575224'
           ref: ${{ github.ref }}
           # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
