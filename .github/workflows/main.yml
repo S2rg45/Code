@@ -11,13 +11,13 @@ on:
       - main
     paths:
       - 'process-glue/**'
-      - '**.py'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
   TOKEN_ACTIONS: ${{ secrets.TOKEN_ACTIONS}}
+  REGION:        ${{ var.REGION }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -35,9 +35,18 @@ jobs:
         with:
           fetch-depth: 1
       
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }} 
+
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11.10'
 
       - name: Install Python requests
         run: pip install requests 
@@ -46,29 +55,13 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
 
-      - name: Get changed files
+      - name: Validate extension file
         id: changed-files-specific
         uses: tj-actions/changed-files@v45
         with:
           files: |
             *.env
             *.py
-      
-      - name: Get changed files and write the outputs to a Txt file
-        id: changed-files-write-output-files-txt
-        uses: tj-actions/changed-files@v45
-        with:
-          write_output_files: true
-
-      - uses: actions/checkout@v4
-
-      - name: Generate Token
-        id: generate_token
-        run: |
-          python - << EOF
-          import secrets
-          token = secrets.token_hex(5)
-          EOF
 
       - name: Get info data
         run: |
@@ -76,23 +69,22 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             cp -r $file file-process
           done 
-          tar -czvf files-folder.tar.gz file-process
-          ls -la
       
-      - name: Upload tar.gz to Repo B
-        env:
-          GH_TOKEN: $TOKEN_ACTIONS
-        run: python send-files.py
+      - name: Validate folders
+        id: validate-folder
+        run: |
+          for file in $(ls file-process); do
+            ls -la "file-process/$file"
+          done
 
-      # - name: Convert changed files to JSON array
-      #   id: json-array
-      #   run: |
-      #     # Convertir la cadena de archivos a un arreglo JSON
-      #     JSON_ARRAY=$(echo '["'$(echo ${{ steps.changed-files.outputs.all_changed_files }} | sed 's/ /","/g')'"]')
-      #     echo "Lista de archivos JSON: $JSON_ARRAY"
-      #     echo "json_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
-      
-      # Runs a single command using the runners shell
+      - name: Generate Token
+        id: generate_token
+        run: |
+          python - << EOF
+          import secrets
+          token = secrets.token_hex(5)
+          EOF  
+
       - name: Trigger workflow infra
         env:
             ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
