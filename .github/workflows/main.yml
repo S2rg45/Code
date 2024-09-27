@@ -95,9 +95,9 @@ jobs:
         uses: kamilchodola/wait-for-workflow-action@1.2.0-rc
         with:
           token: ${{ secrets.TOKEN_ACTIONS }}
-          timeout: '10'
+          timeout: '2'
           repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
-          workflow_id: main.yml
+          workflow_id: create-infra-glue
           ref: ${{ github.ref }}
           # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
         # env:
