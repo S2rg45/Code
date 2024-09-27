@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - 'process-glue/**'
+      - '**.py'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -49,7 +50,9 @@ jobs:
           python-version: '3.11.10'
 
       - name: Install Python requests
-        run: pip install requests 
+        run: |
+          pip install shutil
+          pip install boto3
 
       - name: Get changed files
         id: changed-files
@@ -64,18 +67,23 @@ jobs:
             *.py
 
       - name: Get info data
+        env:
+            FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          mkdir file-process
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            cp -r $file file-process
-          done 
+          if echo ${FILES} | grep -q "file-process.py"; then 
+            echo "El archivo file-process.py no debe ser procesado"
+            exit 1
+          else
+            mkdir file-process
+            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+              cp -r $file file-process
+            done 
+          fi
       
-      - name: Validate folders
+      - name: Send files to S3
         id: validate-folder
         run: |
-          for file in $(ls file-process); do
-            ls -la "file-process/$file"
-          done
+          python file-process.py
 
       - name: Trigger workflow infra
         env:
