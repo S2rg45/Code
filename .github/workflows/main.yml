@@ -87,14 +87,14 @@ jobs:
       - name: Trigger workflow infra
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: $TOKEN_ACTIONS
+          token: ${{ secrets.TOKEN_ACTIONS }}
           repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
           event-type: trigger-code
 
       - name: Wait for create infra
         uses: kamilchodola/wait-for-workflow-action@1.1.0
         with:
-          token: $TOKEN_ACTIONS
+          token: ${{ secrets.TOKEN_ACTIONS }}
           timeout: '10'
           repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
           workflow_id: main.yml
