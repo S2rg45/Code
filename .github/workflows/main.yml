@@ -92,7 +92,7 @@ jobs:
           event-type: trigger-code
 
       - name: Wait for create infra
-        uses: kamilchodola/wait-for-workflow-action@1.1.0
+        uses: kamilchodola/wait-for-workflow-action@1.2.0-rc
         with:
           token: ${{ secrets.TOKEN_ACTIONS }}
           timeout: '10'
