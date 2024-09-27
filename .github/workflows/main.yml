@@ -97,7 +97,6 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $TOKEN_ACTIONS" \
             https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-            -d '{"event_type":"trigger-code", "ISSUE_NUMBER": "${{ steps.create-issue.outputs.ISSUE_NUMBER }}"}'
-            -T files-folder.tar.gz
+            -d '{"event_type":"trigger-code"}'
           fi
           
