@@ -14,6 +14,17 @@ def process_files():
 def process_files():
     pass
 
+def process_files():
+    data = 0
+    pass
+
+
+def process_files():
+    pass
+
+def process_files():
+    pass
+
 
 if __name__ == __main__:
     process_files()
