@@ -52,6 +52,11 @@ jobs:
       - name: Install Python requests
         run: |
           pip install boto3
+      
+      - name: Instalar GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install gh -y
 
       - name: Get changed files
         id: changed-files
@@ -90,17 +95,27 @@ jobs:
           token: ${{ secrets.TOKEN_ACTIONS }}
           repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
           event-type: trigger-code
-
-      - name: Wait for create infra
-        uses: kamilchodola/wait-for-workflow-action@1.2.0-rc
-        with:
-          token: ${{ secrets.TOKEN_ACTIONS }}
-          timeout: '2'
-          organization: 'DemoNubiral'
-          repository: 'MX216822-3-claro-cenam-infre-glue'
-          workflow_id: '118575224'
-          ref: ${{ github.ref }}
-          # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
+      
+      - name: Esperar finalización del workflow en Repo B
+        run: |
+          while true; do
+            status=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json status --jq '.[0].status')
+            echo "Estado actual: $status"
+            if [[ "$status" == "completed" ]]; then
+              conclusion=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json conclusion --jq '.[0].conclusion')
+              echo "Conclusión del workflow: $conclusion"
+              if [[ "$conclusion" == "success" ]]; then
+                echo "Workflow completado exitosamente."
+                break
+              else
+                echo "El workflow falló."
+                exit 1
+              fi
+            fi
+            echo "Esperando a que el workflow termine..."
+            sleep 10  # Espera de 10 segundos antes de volver a verificar el estado
+          done
+        # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
         # env:
         #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
