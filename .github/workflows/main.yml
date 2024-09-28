@@ -56,7 +56,6 @@ jobs:
       
       - name: Instalar GitHub CLI
         run: |
-          sudo apt update
           sudo apt install gh -y
 
       - name: Get changed files
@@ -99,6 +98,7 @@ jobs:
       
       - name: Esperar finalización del workflow en Repo B
         run: |
+          sleep 2000
           while true; do
             status=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json status --jq '.[0].status')
             echo "Estado actual: $status"
@@ -114,7 +114,7 @@ jobs:
               fi
             fi
             echo "Esperando a que el workflow termine..."
-            sleep 10  # Espera de 10 segundos antes de volver a verificar el estado
+            sleep 100  # Espera de 10 segundos antes de volver a verificar el estado
           done
         # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
         # env:
