@@ -52,6 +52,7 @@ jobs:
 
       - name: Install Python requests
         run: |
+          pip install pytz
           pip install boto3
       
       - name: Instalar GitHub CLI
@@ -88,6 +89,12 @@ jobs:
         id: validate-folder
         run: |
           python file-process.py
+      
+      - name: Validate create or update folders
+        if: ${{ steps.validate-folder.outputs.status == 'update' }}
+        run: | 
+          echo "created infrastructure"
+          exit 0
 
       - name: Trigger workflow infra
         uses: peter-evans/repository-dispatch@v3
@@ -116,19 +123,4 @@ jobs:
             echo "Esperando a que el workflow termine..."
             sleep 50  # Espera de 10 segundos antes de volver a verificar el estado
           done
-        # client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}" }'
-        # env:
-        #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-
-        # run: |
-        #   if echo ${ALL_CHANGED_FILES} | grep -q ".github/workflows/main.yml"; then 
-        #     echo "El archivo .github/workflows/main.yml ha sido modificado. No debe ser parte de este proceso."
-        #     exit 1
-        #   else
-        #     curl -X POST \
-        #     -H "Accept: application/vnd.github.v3+json" \
-        #     -H "Authorization: token $TOKEN_ACTIONS" \
-        #     https://api.github.com/repos/DemoNubiral/MX216822-3-claro-cenam-infre-glue/dispatches \
-        #     -d '{"event_type":"trigger-code"}'
-        #   fi
           
