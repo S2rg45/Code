@@ -75,7 +75,7 @@ class UpFiles():
     
     def check_if_folder_exists_in_s3(self, folder_name):
         # Verifica si la carpeta existe en S3 usando list_objects_v2
-        response = self.s3.list_objects_v2(
+        response = self.s3_session.list_objects_v2(
             Bucket=self.bucket_name,
             Prefix=folder_name + '/'  # Comprobar si hay objetos en la "carpeta"
         )
