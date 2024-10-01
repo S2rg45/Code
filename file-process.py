@@ -86,7 +86,7 @@ class UpFiles():
     
     def register_file_dynamodb(self, folder_name, s3_key, is_new):
         guatemala_timezone = pytz.timezone('America/Guatemala')
-        current_time_guatemala = datetime.now(guatemala_timezone)
+        current_time_guatemala = datetime.datetime.now(guatemala_timezone)
         formatted_time = current_time_guatemala.strftime('%Y-%m-%d %H:%M:%S')
         status_flag = "created" if is_new else "update"
         try:
