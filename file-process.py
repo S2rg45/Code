@@ -16,7 +16,7 @@ class UpFiles():
         self.aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
        
         self.s3_session = boto3.client('s3')
-        self.dynamodb = boto3.client('dynamodb')
+        self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table(self.dynamo_table)
     
 
@@ -67,7 +67,7 @@ class UpFiles():
                         logging.info(f"El archivo {file_path} no existe.")
                     except NoCredentialsError:
                         logging.info("Credenciales no disponibles para AWS.")
-        print(f"{status}")
+        print(f"{status}") 
         logging.info("--------------------------------")
         logging.info("Proceso completado.")
         logging.info("--------------------------------")
