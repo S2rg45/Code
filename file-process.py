@@ -16,39 +16,31 @@ class UpFiles():
         self.aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
        
         self.s3_session = boto3.client('s3')
-        self.dynamodb = boto3.resource('dynamodb')
+        self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
         self.table = self.dynamodb.Table(self.dynamo_table)
     
 
     def move_and_upload_files(self):
         files = os.listdir(self.source_dir)
-
         for file in files:
             # Obtenemos el nombre base sin la extensión
             base_name, ext = os.path.splitext(file)
-
             # Crear el nombre del directorio
             target_dir = os.path.join(self.source_dir, base_name)
-
             # Crear la carpeta si no existe
             if not os.path.exists(target_dir):
                 os.makedirs(target_dir)
-
             # Ruta completa del archivo de origen
             source_file = os.path.join(self.source_dir, file)
-
             # Ruta completa del archivo en la carpeta de destino
             target_file = os.path.join(target_dir, file)
-
             # Mover el archivo a la carpeta correspondiente
             shutil.move(source_file, target_file)
-
             # Subir la carpeta completa a S3
             for root, dirs, files in os.walk(target_dir):
                 for filename in files:
                     file_path = os.path.join(root, filename)
                     s3_key = os.path.relpath(file_path, self.source_dir)  # Relativo a la carpeta base
-
                     try:
                         # Validate if the folder already exists
                         if not self.check_if_folder_exists_in_s3(base_name):
@@ -67,7 +59,7 @@ class UpFiles():
                         logging.info(f"El archivo {file_path} no existe.")
                     except NoCredentialsError:
                         logging.info("Credenciales no disponibles para AWS.")
-        print(f"{status}") 
+        self.set_output("status", status) 
         logging.info("--------------------------------")
         logging.info("Proceso completado.")
         logging.info("--------------------------------")
@@ -81,7 +73,12 @@ class UpFiles():
         )
         # Si existen objetos bajo el prefijo, la carpeta existe
         return 'Contents' in response
+    
 
+    def set_output(self, output_name, value):
+        if "GITHUB_OUTPUT" in os.environ:
+            with open(os.environ["GITHUB_OUTPUT"], "a") as variable:
+                variable.write(f"{output_name}={value}")
 
     
     def register_file_dynamodb(self, folder_name, s3_key, is_new):
@@ -101,12 +98,13 @@ class UpFiles():
                 )
                 logging.info(f"Carpeta '{folder_name}', registrada correctamente con fecha {formatted_time}")
             else: 
-                self.table.put_item(
-                    Item={
-                        "process-files": folder_name,
-                        "S3_key":s3_key,
-                        "UpdateDate": formatted_time,
-                        "Status": status_flag  
+                self.table.update_item(
+                    Key={'folder_name': folder_name},
+                    UpdateExpression="SET s3_key = :s3_key, UpdateDate = :UpdateDate, status = :status",
+                    ExpressionAttributeValues={
+                        ':s3_key': s3_key,
+                        ':UpdateDate': formatted_time,
+                        ':status': status_flag
                     }
                 )
                 logging.info(f"Carpeta '{folder_name}',se actualizo correctamente con fecha {formatted_time}")
@@ -125,5 +123,6 @@ if __name__ == "__main__":
     bucket_name = 'process-etl-glue'
     # Nombre de la Tabla en DynamoDB
     dynamodb_table = 'state-files-process'
+    region_name = 'us-east-2'
     uploader = UpFiles(source_dir, bucket_name, dynamodb_table)
     uploader.move_and_upload_files()
