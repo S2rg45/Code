@@ -99,12 +99,15 @@ class UpFiles():
                 logging.info(f"Carpeta '{folder_name}', registrada correctamente con fecha {formatted_time}")
             else: 
                 self.table.update_item(
-                    Key={'folder_name': folder_name},
-                    UpdateExpression="SET s3_key = :s3_key, UpdateDate = :UpdateDate, status = :status",
+                    Key={'process-files': folder_name},
+                    UpdateExpression="SET S3_key = :S3_key, UpdateDate = :UpdateDate, #Status = :Status",
                     ExpressionAttributeValues={
-                        ':s3_key': s3_key,
+                        ':S3_key': s3_key,
                         ':UpdateDate': formatted_time,
-                        ':status': status_flag
+                        ':Status': status_flag
+                    },
+                    ExpressionAttributeNames={
+                        '#Status': 'Status'  # Usamos un alias para evitar el conflicto con la palabra reservada
                     }
                 )
                 logging.info(f"Carpeta '{folder_name}',se actualizo correctamente con fecha {formatted_time}")

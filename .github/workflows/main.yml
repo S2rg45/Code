@@ -98,12 +98,14 @@ jobs:
 
       - name: Trigger workflow infra
         uses: peter-evans/repository-dispatch@v3
+        if: ${{ steps.validate-folder.outputs.status == 'created' }}
         with:
           token: ${{ secrets.TOKEN_ACTIONS }}
           repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
           event-type: trigger-code
       
       - name: Esperar finalización del workflow en Repo B
+        if: ${{ steps.validate-folder.outputs.status == 'created' }}
         run: |
           sleep 50
           while true; do
