@@ -51,7 +51,7 @@ class UpFiles():
                     s3_key = os.path.join(s3_folder, os.path.relpath(file_path, self.source_dir))  # Relativo a la carpeta base
                     try:
                         # Validate if the folder already exists
-                        if not self.check_if_folder_exists_in_s3(base_name):
+                        if not self.check_if_folder_exists_in_s3(base_name, s3_folder):
                             self.s3_session.upload_file(file_path, self.bucket_name, s3_key)
                             logging.info(f"Archivo {file_path} subido exitosamente a s3://{self.bucket_name}/{s3_key}")
                             self.register_file_dynamodb(base_name, s3_key, is_new=True)
@@ -73,11 +73,11 @@ class UpFiles():
         logging.info("--------------------------------")
 
     
-    def check_if_folder_exists_in_s3(self, folder_name):
+    def check_if_folder_exists_in_s3(self, folder_name, s3_folder):
         # Verifica si la carpeta existe en S3 usando list_objects_v2
         response = self.s3_session.list_objects_v2(
             Bucket=self.bucket_name,
-            Prefix=folder_name + '/'  # Comprobar si hay objetos en la "carpeta"
+            Prefix=s3_folder+'/'+folder_name+'/'  # Comprobar si hay objetos en la "carpeta"
         )
         # Si existen objetos bajo el prefijo, la carpeta existe
         return 'Contents' in response
