@@ -17,8 +17,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: subir-a-s3-global
-  cancel-in-progress: true
+  group: subir-a-s3-${{ github.ref }} # Agrupa por branch, para que no se solapen en el mismo branch
+  cancel-in-progress: false
 
 env:
   TOKEN_ACTIONS : ${{ secrets.TOKEN_ACTIONS}}
