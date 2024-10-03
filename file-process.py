@@ -36,11 +36,19 @@ class UpFiles():
             target_file = os.path.join(target_dir, file)
             # Mover el archivo a la carpeta correspondiente
             shutil.move(source_file, target_file)
+            # Determinar si es una carpeta de "procesos" o "variables"
+            if base_name.startswith("process-"):
+                s3_folder = "procesos"
+            elif base_name.startswith("variable-"):
+                s3_folder = "variables"
+            else:
+                logging.info(f"El archivo {file} no pertenece a 'process-' o 'variable-', omitiendo...")
+                continue
             # Subir la carpeta completa a S3
             for root, dirs, files in os.walk(target_dir):
                 for filename in files:
                     file_path = os.path.join(root, filename)
-                    s3_key = os.path.relpath(file_path, self.source_dir)  # Relativo a la carpeta base
+                    s3_key = os.path.join(s3_folder, os.path.relpath(file_path, self.source_dir))  # Relativo a la carpeta base
                     try:
                         # Validate if the folder already exists
                         if not self.check_if_folder_exists_in_s3(base_name):
