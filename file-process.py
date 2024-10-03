@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # Directorio donde están los archivos
     source_dir = 'file-process/'
     # Nombre del bucket de S3
-    bucket_name = 'process-etl-glue'
+    bucket_name = 'process-etl-glue-prod'
     # Nombre de la Tabla en DynamoDB
     dynamodb_table = 'state-files-process'
     region_name = 'us-east-2'
