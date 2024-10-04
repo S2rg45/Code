@@ -99,10 +99,7 @@ jobs:
 
       - name: Process variables from file
         run: |
-          while IFS= read -r line; do
-            echo "Processing $line"
-            export "$line"  # Exporta cada variable como una variable de entorno
-          done < output.txt
+          cat output.txt
 
       
       # - name: Validate create or update folders
