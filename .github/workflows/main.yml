@@ -90,9 +90,9 @@ jobs:
             ls -la
             ls -la file-process
           fi
-          
-      - name: Run step if all listed files above have been deleted
-        if: steps.changed-files-specific.outputs.only_deleted == 'true'
+
+      - name: Run step if any of the listed files above is deleted
+        if: steps.changed-files-specific.outputs.any_deleted == 'true'
         env:
           DELETED_FILES: ${{ steps.changed-files-specific.outputs.deleted_files }}
         run: |
