@@ -110,15 +110,15 @@ jobs:
           echo "\"$key\": \"$value\"," >> json_payload.txt
           done < output.txt
           # Remueve la última coma y cierra el JSON
-          sed '$ s/,$//' json_payload.txt > json_payload_final.txt
-          echo "}" >> json_payload_final.txt
+          sed '$ s/,$//' json_payload.txt > json_payload_final.json
+          echo "}" >> json_payload_final.json
 
 
       - name: Read JSON content and set as output
         id: set-json
         run: |
-          cat json_payload_final.txt
-          json=$(cat json_payload_final.txt)
+          cat json_payload_final.json
+          json=$(cat json_payload_final.json)
           echo "json_payload=$json" >> $GITHUB_OUTPUT
       
       # - name: Validate create or update folders
