@@ -108,7 +108,7 @@ jobs:
           while IFS='=' read -r key value; do
           # Agrega cada variable como un par clave-valor JSON
           echo "\"$key\": \"$value\"," >> json_payload.txt
-          done < fr.txt
+          done < output.txt
           # Remueve la última coma y cierra el JSON
           sed '$ s/,$//' json_payload.txt > json_payload_final.txt
           echo "}" >> json_payload_final.txt
