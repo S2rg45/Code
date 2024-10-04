@@ -90,6 +90,15 @@ jobs:
             ls -la
             ls -la file-process
           fi
+          
+      - name: Run step if all listed files above have been deleted
+        if: steps.changed-files-specific.outputs.only_deleted == 'true'
+        env:
+          DELETED_FILES: ${{ steps.changed-files-specific.outputs.deleted_files }}
+        run: |
+          for file in ${DELETED_FILES}; do
+            echo "$file was deleted"
+          done
       
       # - name: Send files to S3
       #   id: validate-folder
