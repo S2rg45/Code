@@ -91,69 +91,45 @@ jobs:
             ls -la file-process
           fi
 
-      
       - name: Send files to S3
         id: validate-folder
         run: |
-          python file-process.py > output.txt
-
-      - name: Process variables from file
-        run: |
-          cat output.txt
+          python file-process.py 
       
-      - name: Create json folder
-        id: convert-to-json
-        run: |
-          echo -n "{" > json_payload.txt
-          while IFS='=' read -r key value; do
-          # Agrega cada variable como un par clave-valor JSON
-          echo "\"$key\": \"$value\"," >> json_payload.txt
-          done < output.txt
-          # Remueve la última coma y cierra el JSON
-          sed  -i'$ s/,$//' json_payload.txt > json_payload_final.json
-          echo -n "}" >> json_payload_final.json
+      - name: Validate create or update folders
+        if: ${{ steps.validate-folder.outputs.status == 'update' }}
+        run: | 
+          echo "created infrastructure"
+          exit 0
 
-
-      - name: Read JSON content and set as output
-        id: set-json
-        run: |
-          cat json_payload_final.json
-          echo "json_payload=$(cat json_payload_final.json)" >> $GITHUB_OUTPUT
+      - name: Trigger workflow infra
+        uses: peter-evans/repository-dispatch@v3
+        if: ${{ steps.validate-folder.outputs.status == 'created' }}
+        with:
+          token: ${{ secrets.TOKEN_ACTIONS }}
+          repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
+          event-type: trigger-code
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", status}'
       
-      # - name: Validate create or update folders
-      #   if: ${{ steps.validate-folder.outputs.status == 'update' }}
-      #   run: | 
-      #     echo "created infrastructure"
-      #     exit 0
-
-      # - name: Trigger workflow infra
-      #   uses: peter-evans/repository-dispatch@v3
-      #   if: ${{ steps.validate-folder.outputs.status == 'created' }}
-      #   with:
-      #     token: ${{ secrets.TOKEN_ACTIONS }}
-      #     repository: DemoNubiral/MX216822-3-claro-cenam-infre-glue
-      #     event-type: trigger-code
-      #     client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", status}'
-      
-      # - name: Esperar finalización del workflow en Repo B
-      #   if: ${{ steps.validate-folder.outputs.status == 'created' }}
-      #   run: |
-      #     sleep 50
-      #     while true; do
-      #       status=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json status --jq '.[0].status')
-      #       echo "Estado actual: $status"
-      #       if [[ "$status" == "completed" ]]; then
-      #         conclusion=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json conclusion --jq '.[0].conclusion')
-      #         echo "Conclusión del workflow: $conclusion"
-      #         if [[ "$conclusion" == "success" ]]; then
-      #           echo "Workflow completado exitosamente."
-      #           break
-      #         else
-      #           echo "El workflow falló."
-      #           exit 1
-      #         fi
-      #       fi
-      #       echo "Esperando a que el workflow termine..."
-      #       sleep 50  # Espera de 10 segundos antes de volver a verificar el estado
-      #     done
+      - name: Esperar finalización del workflow en Repo B
+        if: ${{ steps.validate-folder.outputs.status == 'created' }}
+        run: |
+          sleep 50
+          while true; do
+            status=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json status --jq '.[0].status')
+            echo "Estado actual: $status"
+            if [[ "$status" == "completed" ]]; then
+              conclusion=$(gh run list --repo DemoNubiral/MX216822-3-claro-cenam-infre-glue --json conclusion --jq '.[0].conclusion')
+              echo "Conclusión del workflow: $conclusion"
+              if [[ "$conclusion" == "success" ]]; then
+                echo "Workflow completado exitosamente."
+                break
+              else
+                echo "El workflow falló."
+                exit 1
+              fi
+            fi
+            echo "Esperando a que el workflow termine..."
+            sleep 50  # Espera de 10 segundos antes de volver a verificar el estado
+          done
           
