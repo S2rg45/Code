@@ -118,8 +118,7 @@ jobs:
         id: set-json
         run: |
           cat json_payload_final.json
-          json=$(cat json_payload_final.json)
-          echo "json_payload=$json" >> $GITHUB_OUTPUT
+          echo "json_payload=$(cat json_payload_final.json)" >> $GITHUB_OUTPUT
       
       # - name: Validate create or update folders
       #   if: ${{ steps.validate-folder.outputs.status == 'update' }}
