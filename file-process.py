@@ -52,14 +52,19 @@ class UpFiles():
                     try:
                         # Validate if the folder already exists
                         if not self.check_if_folder_exists_in_s3(base_name, s3_folder):
+                            # Crear el archivo en S3
                             self.s3_session.upload_file(file_path, self.bucket_name, s3_key)
+                            # setear s3_key para utilizar el workflow
+                            self.path_create_infra(base_name, s3_key)
                             logging.info(f"Archivo {file_path} subido exitosamente a s3://{self.bucket_name}/{s3_key}")
                             self.register_file_dynamodb(base_name, s3_key, is_new=True)
                             status="created"
                         else:
                             # Actualizar el archivo en S3
                             self.s3_session.upload_file(file_path, self.bucket_name, s3_key)
-                            print(f"Archivo {file_path} actualizado exitosamente en s3://{self.bucket_name}/{s3_key}")
+                            # setear s3_key para utilizar el workflow
+                            self.path_create_infra(base_name, s3_key)
+                            logging.info(f"Archivo {file_path} actualizado exitosamente en s3://{self.bucket_name}/{s3_key}")
                             # Actualizar en DynamoDB
                             self.register_file_dynamodb(base_name, s3_key, is_new=False)
                             status="update"
@@ -82,6 +87,11 @@ class UpFiles():
         # Si existen objetos bajo el prefijo, la carpeta existe
         return 'Contents' in response
     
+
+    def path_create_infra(self,name_folder ,s3_key):
+        if "variable" in s3_key:
+            print(f"{name_folder}={s3_key}")
+
 
     def set_output(self, output_name, value):
         if "GITHUB_OUTPUT" in os.environ:
