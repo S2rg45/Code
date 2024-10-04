@@ -117,7 +117,8 @@ jobs:
       - name: Read JSON content and set as output
         id: set-json
         run: |
-          json=$(cat json_payload.txt)
+          cat json_payload_final.txt
+          json=$(cat json_payload_final.txt)
           echo "json_payload=$json" >> $GITHUB_OUTPUT
       
       # - name: Validate create or update folders
