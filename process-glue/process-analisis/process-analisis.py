@@ -13,9 +13,6 @@ def process_files():
 
 
 
-def process_files():
-    data = 0
-    pass
 
 
 
