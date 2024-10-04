@@ -104,14 +104,14 @@ jobs:
       - name: Create json folder
         id: convert-to-json
         run: |
-          echo "{" > json_payload.txt
+          echo -n "{" > json_payload.txt
           while IFS='=' read -r key value; do
           # Agrega cada variable como un par clave-valor JSON
           echo "\"$key\": \"$value\"," >> json_payload.txt
           done < output.txt
           # Remueve la última coma y cierra el JSON
-          sed '$ s/,$//' json_payload.txt > json_payload_final.json
-          echo "}" >> json_payload_final.json
+          sed  -i'$ s/,$//' json_payload.txt > json_payload_final.json
+          echo -n "}" >> json_payload_final.json
 
 
       - name: Read JSON content and set as output
