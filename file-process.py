@@ -8,15 +8,16 @@ from botocore.exceptions import NoCredentialsError
 
 
 class UpFiles():
-    def __init__(self, source_dir, bucket_name, dynamo_table):
+    def __init__(self, source_dir, bucket_name,region_name, dynamo_table):
         self.source_dir = source_dir
+        self.region_name = region_name
         self.bucket_name = bucket_name
         self.dynamo_table = dynamo_table
         self.aws_key = os.getenv("AWS_ACCESS_KEY_ID")
         self.aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
        
         self.s3_session = boto3.client('s3')
-        self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
+        self.dynamodb = boto3.resource('dynamodb', self.region_name)
         self.table = self.dynamodb.Table(self.dynamo_table)
     
 
@@ -145,5 +146,5 @@ if __name__ == "__main__":
     # Nombre de la Tabla en DynamoDB
     dynamodb_table = os.getenv("DYNAMO_TABLE") #'state-files-process'
     region_name = os.getenv("AWS_REGION") #'us-east-2'
-    uploader = UpFiles(source_dir, bucket_name, dynamodb_table)
+    uploader = UpFiles(source_dir, bucket_name,region_name ,dynamodb_table)
     uploader.move_and_upload_files()

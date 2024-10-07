@@ -22,7 +22,7 @@ concurrency:
 
 env:
   TOKEN_ACTIONS         : ${{ secrets.TOKEN_ACTIONS}}
-  REGION                : ${{ vars.AWS_REGION }}
+  AWS_REGION            : ${{ vars.AWS_REGION }}
   GH_TOKEN              : ${{ secrets.TOKEN_ACTIONS}}
   BUCKET_NAME_PROCESS   : ${{ vars.BUCKET_NAME_PROCESS }}
   DYNAMO_TABLE          : ${{ vars.DYNAMO_TABLE }}
@@ -48,7 +48,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.REGION }} 
+          aws-region: ${{ env.AWS_REGION }} 
 
       - uses: actions/checkout@v4
 
