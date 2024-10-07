@@ -21,9 +21,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  TOKEN_ACTIONS : ${{ secrets.TOKEN_ACTIONS}}
-  REGION        : ${{ vars.AWS_REGION }}
-  GH_TOKEN      : ${{ secrets.TOKEN_ACTIONS}}
+  TOKEN_ACTIONS         : ${{ secrets.TOKEN_ACTIONS}}
+  REGION                : ${{ vars.AWS_REGION }}
+  GH_TOKEN              : ${{ secrets.TOKEN_ACTIONS}}
+  BUCKET_NAME_PROCESS   : ${{ vars.BUCKET_NAME_PROCESS }}
+  DYNAMO_TABLE          : ${{ vars.DYNAMO_TABLE }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
