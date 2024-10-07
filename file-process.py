@@ -17,7 +17,7 @@ class UpFiles():
         self.aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
        
         self.s3_session = boto3.client('s3')
-        self.dynamodb = boto3.resource('dynamodb', self.region_name)
+        self.dynamodb = boto3.resource('dynamodb', region_name=self.region_name)
         self.table = self.dynamodb.Table(self.dynamo_table)
     
 
@@ -61,6 +61,7 @@ class UpFiles():
                             self.register_file_dynamodb(base_name, s3_key, is_new=True)
                             status="created"
                         else:
+                            print("ya existe S3")
                             # Actualizar el archivo en S3
                             self.s3_session.upload_file(file_path, self.bucket_name, s3_key)
                             # setear s3_key para utilizar el workflow
@@ -126,8 +127,9 @@ class UpFiles():
                         ':Status': status_flag
                     },
                     ExpressionAttributeNames={
-                        '#Status': 'Status'  # Usamos un alias para evitar el conflicto con la palabra reservada
-                    }
+                        '#Status': 'Status'
+                    },
+                    ReturnValues="UPDATED_NEW"  # Para obtener los valores actualizados
                 )
                 logging.info(f"Carpeta '{folder_name}',se actualizo correctamente con fecha {formatted_time}")
         except Exception as e:
@@ -142,9 +144,9 @@ if __name__ == "__main__":
     # Directorio donde están los archivos
     source_dir = 'file-process/'
     # Nombre del bucket de S3
-    bucket_name = os.getenv("BUCKET_NAME_PROCESS") #'process-etl-glue-prod'
+    bucket_name = 'process-etl-glue-prod'
     # Nombre de la Tabla en DynamoDB
-    dynamodb_table = os.getenv("DYNAMO_TABLE") #'state-files-process'
-    region_name = os.getenv("AWS_REGION") #'us-east-2'
+    dynamodb_table = 'state-files-process'
+    region_name = 'us-east-2'
     uploader = UpFiles(source_dir, bucket_name,region_name ,dynamodb_table)
     uploader.move_and_upload_files()
