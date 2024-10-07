@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # Nombre del bucket de S3
     bucket_name = os.getenv("BUCKET_NAME_PROCESS") #'process-etl-glue-prod'
     # Nombre de la Tabla en DynamoDB
-    dynamodb_table = os.getenv("DYNAMO_TABLE_PROCESS") #'state-files-process'
+    dynamodb_table = os.getenv("DYNAMO_TABLE") #'state-files-process'
     region_name = os.getenv("AWS_REGION") #'us-east-2'
     uploader = UpFiles(source_dir, bucket_name,region_name ,dynamodb_table)
     uploader.move_and_upload_files()
