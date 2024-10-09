@@ -11,6 +11,7 @@ from awsglue.dynamicframe import DynamicFrame
 """
     Este código lee desde el AWS Glue Datacatalog dos tablas en una base de datos, después realiza un join entre ambas tablas y calcula el total de la venta. 
     Finalmente, escribe el resultado en un archivo Parquet en S3.
+    
 """
 
 args = getResolvedOptions(sys.argv, ['JOB_NAME'])
